@@ -1,0 +1,1 @@
+const drawAreaDiv = document.getElementById("drawArea");
