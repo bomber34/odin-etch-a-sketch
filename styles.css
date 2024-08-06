@@ -2,4 +2,20 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
+}
+
+#drawArea {
+    display: flex;
+    flex-wrap: wrap;
+
+    width: 720px;
+    height: 720px;
+    border: 3px solid gray;
+}
+
+.square {
+    border: 1px solid whitesmoke;
+    background-color: transparent;
+    box-sizing: border-box;
 }
