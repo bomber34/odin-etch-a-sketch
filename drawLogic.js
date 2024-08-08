@@ -1,8 +1,14 @@
 
 const drawAreaDiv = document.getElementById("drawArea");
+const body = document.querySelector("body");
 const gridSizeCtl = document.getElementById("gridSizeCtl");
 const gridSizeNumberInput = document.getElementById("gridSizeNumberInput")
 const SCALE = 100;
+let widthSize = 1;
+let isLeftMouseBtnDown = false;
+let isRightMouseBtnDown = false;
+const LEFT_MOUSE_BUTTON = 0;
+const RIGHT_MOUSE_BUTTON = 1;
 
 const COLORS = ["black", "red", "blue", "green", "beige", "purple"];
 let color = COLORS[0];
@@ -30,7 +36,7 @@ function initializeGrid() {
     childrenOfDrawArea.forEach((element) => drawAreaDiv.removeChild(element));
 
     // setup divs - square of evenly divided drawAreaDiv.clientWidth)
-    let widthSize = drawAreaDiv.clientWidth / gridSize;
+    widthSize = drawAreaDiv.clientWidth / gridSize;
     
     // Ensure that due to float inprecision, there is no empty column or overdraw
     if (widthSize != Math.floor(widthSize)) {
@@ -41,11 +47,61 @@ function initializeGrid() {
     for (let i = 0; i < squareAmount; i++) {
         let square = document.createElement("div");
         square.classList.add("square");
-        
-        square.setAttribute("style", `width:${widthSize}px; height:${widthSize}px;`); //  background-color: ${color}
+        square.style.width = widthSize + "px";
+        square.style.height = widthSize + "px";
         drawAreaDiv.appendChild(square);
     }
     
 }
 
 initializeGrid();
+
+function checkSingleClick(event) {
+    if (event.type == "mousedown" && event.button == LEFT_MOUSE_BUTTON) {
+        isLeftMouseBtnDown = true;
+    }
+}
+
+function colorSquare(event) {
+    let target = event.target
+    if (!isLeftMouseBtnDown || target == drawAreaDiv) {
+        return;
+    }
+    target.style.backgroundColor = color;
+}
+
+drawAreaDiv.addEventListener("mousemove", (event) => {
+    colorSquare(event)
+})
+
+drawAreaDiv.addEventListener("mousedown", (event) => {
+    checkSingleClick(event);
+    colorSquare(event);
+})
+
+drawAreaDiv.addEventListener("contextmenu", (event) => {
+    console.log("I WAS HERE");
+    event.preventDefault();
+    return false;
+});
+
+// general mouse down listener site wide;
+body.addEventListener("mousedown", (event) => {
+    if (event.button == LEFT_MOUSE_BUTTON) {
+        isLeftMouseBtnDown = true;
+    }
+
+    if (event.button == RIGHT_MOUSE_BUTTON) {
+        isRightMouseBtnDown = true;
+    }
+})
+
+body.addEventListener("mouseup", (event) => {
+    if (event.button == LEFT_MOUSE_BUTTON) {
+        isLeftMouseBtnDown = false;
+    }
+
+    if (event.button == RIGHT_MOUSE_BUTTON) {
+        isRightMouseBtnDown = false;
+    }
+})
