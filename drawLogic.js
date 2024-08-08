@@ -80,7 +80,6 @@ drawAreaDiv.addEventListener("mousedown", (event) => {
 })
 
 drawAreaDiv.addEventListener("contextmenu", (event) => {
-    console.log("I WAS HERE");
     event.preventDefault();
     return false;
 });
