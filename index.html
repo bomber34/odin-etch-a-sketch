@@ -9,12 +9,26 @@
 </head>
 <body>
     <h1>Draw something</h1>
-    <span>
-        <input id="gridLeftBtnColor" type="color" onchange="onColorChange(true)">
-        <input id="gridRightBtnColor" type="color" value="#FFFFFF" onchange="onColorChange(false)">
-        <input id="gridSizeCtl" type="range" min="1" max="100" step="1" value="16" onchange="onChangeRangeInput()">
-        <input id="gridSizeNumberInput" type="number" min="1" max="100" value="16" onchange="onChangeNumberInput()">
-    </span>
+    <div id="options">
+        <div id="colorPickersDiv">
+            <fieldset>
+                <legend>Colors</legend>
+                <div class="colorPicker">
+                    <input id="gridLeftBtnColor" type="color" onchange="onColorChange(true)">
+                    <label for="gridLeftBtnColor">Left Mouse Button</label>
+                </div>
+                <div class="colorPicker">
+                    <input id="gridRightBtnColor" type="color" value="#FFFFFF" onchange="onColorChange(false)">
+                    <label for="gridRightBtnColor">Right Mouse Button</label>
+                </div>
+            </fieldset>
+        </div>
+        <fieldset>
+            <legend>Grid Size</legend>
+            <input id="gridSizeCtl" type="range" min="1" max="100" step="1" value="16" onchange="onChangeRangeInput()">
+            <input id="gridSizeNumberInput" type="number" min="1" max="100" value="16" onchange="onChangeNumberInput()">
+        </fieldset>
+    </div>
     <div id="drawArea"></div>
 </body>
 </html>

@@ -33,3 +33,39 @@ body {
     -webkit-user-select: none;
     -o-user-select: none;
 }
+
+#options {
+    display: flex;
+    flex-direction: row;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
+#colorPickersDiv {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.colorPicker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: auto 20px;
+}
+
+#gridSizeNumberInput {
+    margin: auto;
+}
+
+label {
+    font-size: 12px;
+}
+
+legend {
+    margin: 0 auto;
+}
+
+fieldset {
+    display: flex;
+}

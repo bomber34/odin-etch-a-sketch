@@ -9,14 +9,17 @@ const SCALE = 100;
 let widthSize = 1;
 let isLeftMouseBtnDown = false;
 let isRightMouseBtnDown = false;
-let leftColor = "black";
-let rightColor = "white";
+let leftColor = "#000000";
+let rightColor = "#FFFFFF";
 const LEFT_MOUSE_BUTTON = 0;
 const RIGHT_MOUSE_BUTTON = 2;
 
 const COLORS = ["black", "red", "blue", "green", "beige", "purple"];
 let color = COLORS[0];
 
+
+leftColorPicker.value = leftColor;
+rightColorPicker.value = rightColor;
 
 function pickRandomColor() {
     return COLORS[Math.floor(Math.random() * COLORS.length)];
