@@ -1,14 +1,18 @@
 
 const drawAreaDiv = document.getElementById("drawArea");
 const body = document.querySelector("body");
+const leftColorPicker = document.getElementById("gridLeftBtnColor");
+const rightColorPicker = document.getElementById("gridRightBtnColor");
 const gridSizeCtl = document.getElementById("gridSizeCtl");
 const gridSizeNumberInput = document.getElementById("gridSizeNumberInput")
 const SCALE = 100;
 let widthSize = 1;
 let isLeftMouseBtnDown = false;
 let isRightMouseBtnDown = false;
+let leftColor = "black";
+let rightColor = "white";
 const LEFT_MOUSE_BUTTON = 0;
-const RIGHT_MOUSE_BUTTON = 1;
+const RIGHT_MOUSE_BUTTON = 2;
 
 const COLORS = ["black", "red", "blue", "green", "beige", "purple"];
 let color = COLORS[0];
@@ -16,6 +20,14 @@ let color = COLORS[0];
 
 function pickRandomColor() {
     return COLORS[Math.floor(Math.random() * COLORS.length)];
+}
+
+function onColorChange(isLeft) {
+    if (isLeft) {
+        leftColor = leftColorPicker.value;
+    } else {
+        rightColor = rightColorPicker.value
+    }
 }
 
 function onChangeNumberInput() {
@@ -57,16 +69,27 @@ function initializeGrid() {
 initializeGrid();
 
 function checkSingleClick(event) {
-    if (event.type == "mousedown" && event.button == LEFT_MOUSE_BUTTON) {
-        isLeftMouseBtnDown = true;
+    if (event.type == "mousedown") {
+        if (event.button == LEFT_MOUSE_BUTTON) {
+            isLeftMouseBtnDown = true;
+        } else if (event.button == RIGHT_MOUSE_BUTTON) {
+            isRightMouseBtnDown = true;
+        }
     }
 }
 
 function colorSquare(event) {
     let target = event.target
-    if (!isLeftMouseBtnDown || target == drawAreaDiv) {
+    if (!(isLeftMouseBtnDown || isRightMouseBtnDown) || target == drawAreaDiv) {
         return;
     }
+
+    if (isLeftMouseBtnDown) {
+        color = leftColor;
+    } else if (isRightMouseBtnDown) {
+        color = rightColor;
+    }
+
     target.style.backgroundColor = color;
 }
 
