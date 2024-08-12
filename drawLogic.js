@@ -17,10 +17,6 @@ const RIGHT_MOUSE_BUTTON = 2;
 const COLORS = ["black", "red", "blue", "green", "beige", "purple"];
 let color = COLORS[0];
 
-
-leftColorPicker.value = leftColor;
-rightColorPicker.value = rightColor;
-
 function pickRandomColor() {
     return COLORS[Math.floor(Math.random() * COLORS.length)];
 }
@@ -68,8 +64,6 @@ function initializeGrid() {
     }
     
 }
-
-initializeGrid();
 
 function checkSingleClick(event) {
     if (event.type == "mousedown") {
@@ -130,3 +124,8 @@ body.addEventListener("mouseup", (event) => {
         isRightMouseBtnDown = false;
     }
 })
+
+leftColorPicker.value = leftColor;
+rightColorPicker.value = rightColor;
+
+initializeGrid();
