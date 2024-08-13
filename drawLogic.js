@@ -99,27 +99,31 @@ drawAreaDiv.addEventListener("mousedown", (event) => {
     colorSquare(event);
 })
 
-drawAreaDiv.addEventListener("contextmenu", (event) => {
-    event.preventDefault();
-    return false;
+// general mouse down listener site wide;
+body.addEventListener("contextmenu", (event) => {
+    const target = event.target;
+    if (target.classList.contains("square") || target == drawAreaDiv) {
+        event.preventDefault();
+        return false;
+    }
+    isRightMouseBtnDown = false;
 });
 
-// general mouse down listener site wide;
 body.addEventListener("mousedown", (event) => {
     if (event.button == LEFT_MOUSE_BUTTON) {
         isLeftMouseBtnDown = true;
-    }
-
+    } 
+    
     if (event.button == RIGHT_MOUSE_BUTTON) {
         isRightMouseBtnDown = true;
     }
-})
+})    
 
 body.addEventListener("mouseup", (event) => {
     if (event.button == LEFT_MOUSE_BUTTON) {
         isLeftMouseBtnDown = false;
-    }
-
+    } 
+    
     if (event.button == RIGHT_MOUSE_BUTTON) {
         isRightMouseBtnDown = false;
     }
