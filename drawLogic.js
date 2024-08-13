@@ -13,6 +13,7 @@ let leftColor = "#000000";
 let rightColor = "#FFFFFF";
 const LEFT_MOUSE_BUTTON = 0;
 const RIGHT_MOUSE_BUTTON = 2;
+let currentGridSize = 0;
 
 const COLORS = ["black", "red", "blue", "green", "beige", "purple"];
 let color = COLORS[0];
@@ -41,28 +42,81 @@ function onChangeRangeInput() {
 
 // Redraw the grid
 function initializeGrid() {
+    let gridSize = parseInt(gridSizeCtl.value);
+    const width = getWidth(gridSize);
+    if (gridSize > currentGridSize) {
+        growGrid(width, gridSize, Math.abs(gridSize - currentGridSize));
+    } else if (gridSize < currentGridSize) {
+        shrinkGrid(gridSize, Math.abs(gridSize - currentGridSize));
+    }
+
+    adjustSquareWidth(width);
+    currentGridSize = gridSize;
+}
+
+function adjustSquareWidth(width) {
+    const widthInPixels = `${width}px`;
+    drawAreaDiv.childNodes.forEach((child) => {
+        child.style.width = widthInPixels;
+        child.style.height = widthInPixels;
+    })
+}
+
+function shrinkGrid(newGridSize, diffLines) {
+    let childrenOfDrawArea = Array.from(drawAreaDiv.children);
+    childrenOfDrawArea.forEach((element) => drawAreaDiv.removeChild(element));
+}
+
+function growGrid(width, newGridSize, diffLines) {
+    let gridSize = currentGridSize;
+    for (let i = 0; i < diffLines; i++) {
+        for (let j = 0; j < newGridSize; j++) {
+            drawAreaDiv.appendChild(createSquare(width));
+        }
+    }
+    const lastChildIndex = (gridSize * gridSize) - 1;
+    let index = lastChildIndex;
+    while(index > 0) {
+        for (let i = 0; i < diffLines; i++) {
+            drawAreaDiv.children[index].insertAdjacentElement("afterend", createSquare(width));
+        }
+        index -= gridSize;
+    }
+}
+
+function createSquare(width) {
+    let square = document.createElement("div");
+        square.classList.add("square");
+        square.style.width = width + "px";
+        square.style.height = width + "px";
+    return square
+}
+
+function getWidth(gridSize) {
+        // setup divs - square of evenly divided drawAreaDiv.clientWidth)
+        let width = drawAreaDiv.clientWidth / gridSize;
+    
+        // Ensure that due to float inprecision, there is no empty column or overdraw
+        if (width != Math.floor(width)) {
+            width = Math.floor(width * SCALE - 1) / SCALE;
+        }
+        return width;
+}
+
+function oldDraw() {
     let gridSize = gridSizeCtl.value;
     // clean space
     let childrenOfDrawArea = Array.from(drawAreaDiv.children);
     childrenOfDrawArea.forEach((element) => drawAreaDiv.removeChild(element));
 
     // setup divs - square of evenly divided drawAreaDiv.clientWidth)
-    widthSize = drawAreaDiv.clientWidth / gridSize;
-    
-    // Ensure that due to float inprecision, there is no empty column or overdraw
-    if (widthSize != Math.floor(widthSize)) {
-        widthSize = Math.floor(widthSize * SCALE - 1) / SCALE;
-    }
+    widthSize = getWidth(gridSize);
 
     let squareAmount = gridSize * gridSize;
     for (let i = 0; i < squareAmount; i++) {
-        let square = document.createElement("div");
-        square.classList.add("square");
-        square.style.width = widthSize + "px";
-        square.style.height = widthSize + "px";
+        let square = createSquare(widthSize);
         drawAreaDiv.appendChild(square);
     }
-    
 }
 
 function checkSingleClick(event) {
