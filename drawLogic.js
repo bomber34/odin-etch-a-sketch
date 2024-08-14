@@ -63,8 +63,21 @@ function adjustSquareWidth(width) {
 }
 
 function shrinkGrid(newGridSize, diffLines) {
-    let childrenOfDrawArea = Array.from(drawAreaDiv.children);
-    childrenOfDrawArea.forEach((element) => drawAreaDiv.removeChild(element));
+    for (let i = diffLines * currentGridSize; i > 0; i--) {
+        let child = drawAreaDiv.children[drawAreaDiv.children.length-1];
+        drawAreaDiv.removeChild(child);
+    }
+
+    let index = drawAreaDiv.children.length - 1;
+    let shrinkBy = (currentGridSize - diffLines);
+    while (index > 0) {
+        for (let i = 0; i < diffLines; i++, index--) {
+            let child = drawAreaDiv.children[index];
+            drawAreaDiv.removeChild(child);
+        }
+        index -= shrinkBy;
+    }
+
 }
 
 function growGrid(width, newGridSize, diffLines) {
