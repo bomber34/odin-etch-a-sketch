@@ -166,6 +166,24 @@ drawAreaDiv.addEventListener("mousedown", (event) => {
     colorSquare(event);
 })
 
+drawAreaDiv.addEventListener("mouseover", (event) => {
+    if (event.target.classList.contains("square")) {
+        let sq = event.target
+        let currentColor = sq.style.backgroundColor ? sq.style.backgroundColor : "rgb(255,255,255)"
+        let rgbValues = currentColor.match(/\d+/g).map((val) => (Math.abs(200 - val)).toString(16)).join("");
+        sq.style.borderColor = `#${rgbValues}`;
+        sq.style.borderWidth = "5px";
+    }
+})
+
+drawAreaDiv.addEventListener("mouseout", (event) => {
+    if (event.target.classList.contains("square")) {
+        let sq = event.target
+        sq.style.borderColor = "";
+        sq.style.borderWidth = "";
+    }
+})
+
 // general mouse down listener site wide;
 body.addEventListener("contextmenu", (event) => {
     const target = event.target;
