@@ -169,22 +169,55 @@ function fillArea(oldColor, currentSquare) {
     }
 }
 
+function getRandomColorString() {
+    const red = Math.floor(Math.random() * 256).toString(16);
+    const green = Math.floor(Math.random() * 256).toString(16);
+    const blue = Math.floor(Math.random() * 256).toString(16);
+    return `#${red}${green}${blue}`;
+}
+
+function drawRandomColors() {
+    let distanceInMs = 0;
+    Array.from(drawAreaDiv.children).forEach((child) => {
+        setTimeout(function () {
+            child.style.backgroundColor = getRandomColorString();
+        }, distanceInMs);
+        distanceInMs += 50;
+    })
+}
+
 function colorSquare(event) {
     let target = event.target
-    if (!(isLeftMouseBtnDown || isRightMouseBtnDown) || target == drawAreaDiv) {
+    if (!canColorSquare(target)) {
         return;
     }
 
+    pickColorToDraw()
+    colorAction(event, target);
+}
+
+function colorAction(event, target) {
+    const isMouseDownEvent = event.type == "mousedown";
+    const areAllSpecialButtonsPressed = event.ctrlKey && event.altKey && event.shiftKey
+    console.log("Are all specials pressed: " + areAllSpecialButtonsPressed);
+    if (isMouseDownEvent && areAllSpecialButtonsPressed) {
+        drawRandomColors();
+    } else if (isMouseDownEvent && event.ctrlKey) {
+        fillArea(target.style.backgroundColor, target);
+    } else {
+        target.style.backgroundColor = color;
+    }
+}
+
+function canColorSquare(target) {
+    return (isLeftMouseBtnDown || isRightMouseBtnDown) && target != drawAreaDiv;
+}
+
+function pickColorToDraw() {
     if (isLeftMouseBtnDown) {
         color = leftColor;
     } else if (isRightMouseBtnDown) {
         color = rightColor;
-    }
-    
-    if (event.type == "mousedown" && event.ctrlKey) {
-        fillArea(target.style.backgroundColor, target);
-    } else {
-        target.style.backgroundColor = color;
     }
 }
 
