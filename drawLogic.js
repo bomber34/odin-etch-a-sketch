@@ -9,7 +9,6 @@ const gridSizeNumberInput = document.getElementById("gridSizeNumberInput");
 // constants
 const LEFT_MOUSE_BUTTON = 0;
 const RIGHT_MOUSE_BUTTON = 2;
-const COLORS = ["black", "red", "blue", "green", "beige", "purple"];
 
 // global variables
 let widthSize = 1;
@@ -19,10 +18,6 @@ let leftColor = "#000000";
 let rightColor = "#FFFFFF";
 let currentGridSize = 0;
 let color = COLORS[0];
-
-function pickRandomColor() {
-    return COLORS[Math.floor(Math.random() * COLORS.length)];
-}
 
 function onColorChange(isLeft) {
     if (isLeft) {
