@@ -1,21 +1,23 @@
-
+// elements
 const drawAreaDiv = document.getElementById("drawArea");
 const body = document.querySelector("body");
 const leftColorPicker = document.getElementById("gridLeftBtnColor");
 const rightColorPicker = document.getElementById("gridRightBtnColor");
 const gridSizeCtl = document.getElementById("gridSizeCtl");
-const gridSizeNumberInput = document.getElementById("gridSizeNumberInput")
-const SCALE = 100;
+const gridSizeNumberInput = document.getElementById("gridSizeNumberInput");
+
+// constants
+const LEFT_MOUSE_BUTTON = 0;
+const RIGHT_MOUSE_BUTTON = 2;
+const COLORS = ["black", "red", "blue", "green", "beige", "purple"];
+
+// global variables
 let widthSize = 1;
 let isLeftMouseBtnDown = false;
 let isRightMouseBtnDown = false;
 let leftColor = "#000000";
 let rightColor = "#FFFFFF";
-const LEFT_MOUSE_BUTTON = 0;
-const RIGHT_MOUSE_BUTTON = 2;
 let currentGridSize = 0;
-
-const COLORS = ["black", "red", "blue", "green", "beige", "purple"];
 let color = COLORS[0];
 
 function pickRandomColor() {
@@ -32,16 +34,16 @@ function onColorChange(isLeft) {
 
 function onChangeNumberInput() {
     gridSizeCtl.value = gridSizeNumberInput.value;
-    initializeGrid();
+    drawGrid();
 }
 
 function onChangeRangeInput() {
     gridSizeNumberInput.value = gridSizeCtl.value ;
-    initializeGrid();
+    drawGrid();
 }
 
 // Redraw the grid
-function initializeGrid() {
+function drawGrid() {
     let gridSize = parseInt(gridSizeCtl.value);
     const width = getWidth(gridSize);
     if (gridSize > currentGridSize) {
@@ -52,6 +54,7 @@ function initializeGrid() {
 
     adjustSquareWidth(width);
     currentGridSize = gridSize;
+    widthSize = width;
 }
 
 function adjustSquareWidth(width) {
@@ -89,7 +92,7 @@ function growGrid(width, newGridSize, diffLines) {
     }
     const lastChildIndex = (gridSize * gridSize) - 1;
     let index = lastChildIndex;
-    while(index > 0) {
+    while(index >= 0) {
         for (let i = 0; i < diffLines; i++) {
             drawAreaDiv.children[index].insertAdjacentElement("afterend", createSquare(width));
         }
@@ -99,21 +102,20 @@ function growGrid(width, newGridSize, diffLines) {
 
 function createSquare(width) {
     let square = document.createElement("div");
-        square.classList.add("square");
-        square.style.width = width + "px";
-        square.style.height = width + "px";
+    square.classList.add("square");
     return square
 }
 
 function getWidth(gridSize) {
-        // setup divs - square of evenly divided drawAreaDiv.clientWidth)
-        let width = drawAreaDiv.clientWidth / gridSize;
-    
-        // Ensure that due to float inprecision, there is no empty column or overdraw
-        if (width != Math.floor(width)) {
-            width = Math.floor(width * SCALE - 1) / SCALE;
-        }
-        return width;
+    const SCALE = 100;
+    // setup divs - square of evenly divided drawAreaDiv.clientWidth)
+    let width = drawAreaDiv.clientWidth / gridSize;
+
+    // Ensure that due to float inprecision, there is no empty column or overdraw
+    if (width != Math.floor(width)) {
+        width = Math.floor(width * SCALE - 1) / SCALE;
+    }
+    return width;
 }
 
 function oldDraw() {
@@ -172,7 +174,10 @@ drawAreaDiv.addEventListener("mouseover", (event) => {
         let currentColor = sq.style.backgroundColor ? sq.style.backgroundColor : "rgb(255,255,255)"
         let rgbValues = currentColor.match(/\d+/g).map((val) => (Math.abs(200 - val)).toString(16)).join("");
         sq.style.borderColor = `#${rgbValues}`;
-        sq.style.borderWidth = "5px";
+        
+
+        let borderWidthInPixels = widthSize > 10 ? 5 : Math.floor(widthSize / 2);
+        sq.style.borderWidth = `${borderWidthInPixels}px`;
     }
 })
 
@@ -217,4 +222,4 @@ body.addEventListener("mouseup", (event) => {
 leftColorPicker.value = leftColor;
 rightColorPicker.value = rightColor;
 
-initializeGrid();
+drawGrid();

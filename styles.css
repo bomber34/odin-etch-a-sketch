@@ -9,6 +9,9 @@ body {
     display: flex;
     flex-wrap: wrap;
 
+    box-sizing: content-box;
+    justify-content: space-around;
+
     width: 720px;
     height: 720px;
     border: 3px solid gray;
