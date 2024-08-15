@@ -17,7 +17,7 @@ let isRightMouseBtnDown = false;
 let leftColor = "#000000";
 let rightColor = "#FFFFFF";
 let currentGridSize = 0;
-let color = COLORS[0];
+let color = leftColor;
 
 function onColorChange(isLeft) {
     if (isLeft) {
@@ -98,7 +98,8 @@ function growGrid(width, newGridSize, diffLines) {
 function createSquare(width) {
     let square = document.createElement("div");
     square.classList.add("square");
-    return square
+    square.style.backgroundColor = "#FFFFFF";
+    return square;
 }
 
 function getWidth(gridSize) {
@@ -139,6 +140,35 @@ function checkSingleClick(event) {
     }
 }
 
+function fillArea(oldColor, currentSquare) {
+    let currentIndex = Array.prototype
+                            .indexOf
+                            .call(currentSquare.parentNode.children, currentSquare);
+    let relativeColumnPos = currentIndex % currentGridSize;
+    let squareCol = currentSquare.style.backgroundColor;
+    if (squareCol != oldColor) {
+        return; // hit color border
+    }
+    currentSquare.style.backgroundColor = color;
+    
+    // fill left neighbor
+    if (relativeColumnPos > 0) {
+        fillArea(oldColor, drawAreaDiv.children[currentIndex-1]);
+    }
+    // fill right neighbor
+    if (relativeColumnPos < (currentGridSize - 1)) {
+        fillArea(oldColor, drawAreaDiv.children[currentIndex+1]);
+    }
+    // fill upper neighbor
+    if ((currentIndex - currentGridSize) > 0) {
+        fillArea(oldColor, drawAreaDiv.children[currentIndex-currentGridSize]);
+    }
+    // fill lower neighbor
+    if ((currentIndex + currentGridSize) < drawAreaDiv.children.length) {
+        fillArea(oldColor, drawAreaDiv.children[currentIndex+currentGridSize]);
+    }
+}
+
 function colorSquare(event) {
     let target = event.target
     if (!(isLeftMouseBtnDown || isRightMouseBtnDown) || target == drawAreaDiv) {
@@ -150,8 +180,12 @@ function colorSquare(event) {
     } else if (isRightMouseBtnDown) {
         color = rightColor;
     }
-
-    target.style.backgroundColor = color;
+    
+    if (event.type == "mousedown" && event.ctrlKey) {
+        fillArea(target.style.backgroundColor, target);
+    } else {
+        target.style.backgroundColor = color;
+    }
 }
 
 drawAreaDiv.addEventListener("mousemove", (event) => {
