@@ -45,7 +45,7 @@ function drawGrid() {
     if (gridSize > currentGridSize) {
         growGrid(width, gridSize, Math.abs(gridSize - currentGridSize));
     } else if (gridSize < currentGridSize) {
-        shrinkGrid(gridSize, Math.abs(gridSize - currentGridSize));
+        shrinkGrid(Math.abs(gridSize - currentGridSize));
     }
 
     adjustSquareWidth(width);
@@ -61,7 +61,7 @@ function adjustSquareWidth(width) {
     })
 }
 
-function shrinkGrid(newGridSize, diffLines) {
+function shrinkGrid(diffLines) {
     for (let i = diffLines * currentGridSize; i > 0; i--) {
         let child = drawAreaDiv.children[drawAreaDiv.children.length-1];
         drawAreaDiv.removeChild(child);
@@ -93,41 +93,6 @@ function growGrid(width, newGridSize, diffLines) {
             drawAreaDiv.children[index].insertAdjacentElement("afterend", createSquare(width));
         }
         index -= gridSize;
-    }
-}
-
-function createSquare(width) {
-    let square = document.createElement("div");
-    square.classList.add("square");
-    square.style.backgroundColor = "#FFFFFF";
-    return square;
-}
-
-function getWidth(gridSize) {
-    const SCALE = 100;
-    // setup divs - square of evenly divided drawAreaDiv.clientWidth)
-    let width = drawAreaDiv.clientWidth / gridSize;
-
-    // Ensure that due to float inprecision, there is no empty column or overdraw
-    if (width != Math.floor(width)) {
-        width = Math.floor(width * SCALE - 1) / SCALE;
-    }
-    return width;
-}
-
-function oldDraw() {
-    let gridSize = gridSizeCtl.value;
-    // clean space
-    let childrenOfDrawArea = Array.from(drawAreaDiv.children);
-    childrenOfDrawArea.forEach((element) => drawAreaDiv.removeChild(element));
-
-    // setup divs - square of evenly divided drawAreaDiv.clientWidth)
-    widthSize = getWidth(gridSize);
-
-    let squareAmount = gridSize * gridSize;
-    for (let i = 0; i < squareAmount; i++) {
-        let square = createSquare(widthSize);
-        drawAreaDiv.appendChild(square);
     }
 }
 
