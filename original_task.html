@@ -5,12 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Etch a sketch</title>
     <link rel="stylesheet" href="./styles.css">
-    <script src="./drawLogic.js" defer></script>
+    <script src="./coreLogic.js"></script>
+    <script src="./original_task_logic.js" defer></script>
 </head>
 <body>
     <h1>Draw something</h1>
     <div id="options">
-        <a href="./original_task.html">Original Task</a>
+        <a href="./index.html">Home</a>
+        <button onclick="onChangeGridSize()">Change Size</button>
+        <!--
         <div id="colorPickersDiv">
             <fieldset>
                 <legend>Colors</legend>
@@ -29,6 +32,7 @@
             <input id="gridSizeCtl" type="range" min="1" max="100" step="1" value="16" onchange="onChangeRangeInput()">
             <input id="gridSizeNumberInput" type="number" min="1" max="100" value="16" onchange="onChangeNumberInput()">
         </fieldset>
+        -->
     </div>
     <div id="drawArea"></div>
 </body>
