@@ -3,7 +3,11 @@ const drawAreaDiv = document.getElementById("drawArea");
 
 // page variables
 let currentGridSize = 16;
-let color = "#000000";
+let hasOpacityEffect = false;
+let hasFadeEffect = false;
+let hasRandomColorEffect = false;
+const BLACK = "#000000";
+const RANDOM_COLOR_LIST = ["black", "red", "green", "blue", "yellow", "purple", "orange", "turquoise", "khaki"];
 
 function drawGrid() {
     let gridSize = currentGridSize;
@@ -31,5 +35,47 @@ function onChangeGridSize() {
         drawGrid();
     }
 }
+
+function onChangeCheckBoxOpacityEffect() {
+    hasOpacityEffect = !hasOpacityEffect;
+}
+
+function onChangeCheckBoxRandomColors() {
+    hasRandomColorEffect = !hasRandomColorEffect;
+}
+
+function onChangeCheckBoxFadeInput() {
+    hasFadeEffect = !hasFadeEffect;
+}
+
+drawAreaDiv.addEventListener("mouseover", (event) => {
+    if (event.target.classList.contains("square")) {
+        let sq = event.target;
+        if (hasRandomColorEffect) {
+            sq.style.backgroundColor = RANDOM_COLOR_LIST[Math.floor(Math.random() * RANDOM_COLOR_LIST.length)];
+        } else {
+            sq.style.backgroundColor = BLACK;
+        }
+
+        if (hasOpacityEffect) {
+            let currentOpacity = parseFloat(sq.style.opacity) ? parseFloat(sq.style.opacity) : 0.0;
+            currentOpacity = Math.floor((currentOpacity * 100) + 10) / 100;
+            currentOpacity = Math.min(1.0, currentOpacity);
+            sq.style.opacity = `${currentOpacity}`;
+        } else {
+            sq.style.opacity = "";
+        }
+    }
+})
+
+drawAreaDiv.addEventListener("mouseout", (event) => {
+    if (hasFadeEffect && event.target.classList.contains("square")) {
+        let sq = event.target;
+        setTimeout(() => {
+            sq.style.backgroundColor = "";
+            sq.style.opacity = "";
+        }, 1000);
+    }
+})
 
 drawGrid();

@@ -44,6 +44,16 @@ body {
     margin-bottom: 10px;
 }
 
+#optionsOriginalInputs {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    justify-content: space-around;
+    min-width: 720px;
+}
+
 #colorPickersDiv {
     display: flex;
     flex-direction: row;
