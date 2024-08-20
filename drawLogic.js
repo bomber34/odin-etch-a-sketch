@@ -9,6 +9,7 @@ const gridSizeNumberInput = document.getElementById("gridSizeNumberInput");
 // constants
 const LEFT_MOUSE_BUTTON = 0;
 const RIGHT_MOUSE_BUTTON = 2;
+const MAX_RGB_VALUE_INT = (256**3) - 1;
 
 // global variables
 let widthSize = 1;
@@ -172,12 +173,8 @@ function fillArea(oldColor, currentSquare) {
 
 function getRandomColorString() {
     const MAX_RGB_VALUE = 256;
-    const red = Math.floor(Math.random() * MAX_RGB_VALUE).toString(16).padStart(2, "0");
-    const green = Math.floor(Math.random() * MAX_RGB_VALUE).toString(16).padStart(2, "0");;
-    const blue = Math.floor(Math.random() * MAX_RGB_VALUE).toString(16).padStart(2, "0");;
-
-    const res = `#${red}${green}${blue}`;
-    return res;
+    let rgbValues = [0, 0, 0].map((val) => Math.floor(Math.random() * MAX_RGB_VALUE));
+    return toHexString(rgbValues);
 }
 
 function shuffle(a) {
@@ -265,6 +262,96 @@ function chooseAnimation(indices) {
     return indices;
 }
 
+function toHexString(rgbValues) {
+    return `#${rgbValues.map((val) => val.toString(16).padStart(2, "0")).join("")}`;
+}
+
+function extractRbgIntValues(col) {
+    return col.match(/\d+/g).map((val) => parseInt(val));
+}
+
+function getNextColor(gradientColor, step) {
+    let rgbValues = extractRbgIntValues(gradientColor);
+    let val = (rgbValues[2] + (rgbValues[1] * 256) + (rgbValues[0] * (256**2)) + step) % MAX_RGB_VALUE_INT;
+    
+    rgbValues[2] = val % 256;
+    rgbValues[1] = Math.floor(val / 256) % 256;
+    rgbValues[0] = Math.floor(val / (256 ** 2)) % 256;
+    return toHexString(rgbValues);
+}
+
+function hexStringToRgbValues(col) {
+    let hexVals = col.substr(1, col.length);
+    let red = hexVals.slice(0, 2);
+    let green = hexVals.slice(2, 4);
+    let blue = hexVals.slice(4, 6);
+    return [red, green, blue].map((val) => parseInt(val, 16));
+}
+
+function getRgbIntValue(hexString) {
+    let rgbValues = hexStringToRgbValues(hexString);
+    let rgbIntVal = rgbValues[2] + (rgbValues[1] * 256) + (rgbValues[0] * (256**2));
+    return rgbIntVal;
+}
+
+function rgbIntValueToHextString(rgbIntVal) {
+    let rgbValues = new Array(3);
+    rgbValues[2] = rgbIntVal % 256;
+    rgbValues[1] = Math.floor(rgbIntVal / 256) % 256;
+    rgbValues[0] = Math.floor(rgbIntVal / (256 ** 2)) % 256;
+    return toHexString(rgbValues);
+}
+
+function getGradient(step) {
+    let gradientColors = new Array(drawAreaDiv.children.length);
+    gradientColors[0] = getRgbIntValue(color);
+    for (let i = 1; i < gradientColors.length; i++) {
+        gradientColors[i] = (gradientColors[i-1] + step) % MAX_RGB_VALUE_INT;
+    }
+    let sortedStuff = gradientColors.sort(function(a, b) {
+        return a - b;
+    });
+    let mappedStuff = sortedStuff.map((val) => rgbIntValueToHextString(val));
+
+    return mappedStuff;
+}
+
+function drawGradient() {
+    let count = 1;
+    let max = drawAreaDiv.children.length
+    let addDistance = currentGridSize < 50 ? 50 : 25;
+    let colorGradient = color;
+    let distanceInMs = addDistance;
+    let indices = Array.from({length: (max)}, (e, i) => i);
+
+    const shouldUseLinesAnimation = FORCED_ANIMATION_STYLE < 0 || FORCED_ANIMATION_STYLE > 6;
+    FORCED_ANIMATION_STYLE = shouldUseLinesAnimation ? 0 : FORCED_ANIMATION_STYLE;
+    indices = chooseAnimation(indices);
+    FORCED_ANIMATION_STYLE = shouldUseLinesAnimation ? -1 : FORCED_ANIMATION_STYLE;
+
+    const step = Math.floor(MAX_RGB_VALUE_INT / drawAreaDiv.children.length);
+    const rgbVals = getGradient(step);
+    let i = 0;
+    for (index of indices) {
+        /*
+        colorGradient = getNextColor("rgb" + hexStringToRgbValues(colorGradient), step);
+        */
+
+        drawAsync(index, rgbVals[i], distanceInMs);
+        if (count % currentGridSize == 0) {
+            distanceInMs += addDistance;
+        }
+        count++;
+        i++;
+    }
+}
+
+function drawAsync(index, col, distanceInMs) {
+    setTimeout(function() {
+        drawAreaDiv.children[index].style.backgroundColor = col;
+    }, distanceInMs)
+}
+
 function drawRandomColors() {
     let count = 1;
     let max = drawAreaDiv.children.length
@@ -334,7 +421,7 @@ drawAreaDiv.addEventListener("mouseover", (event) => {
     if (event.target.classList.contains("square")) {
         let sq = event.target
         let currentColor = sq.style.backgroundColor ? sq.style.backgroundColor : "rgb(255,255,255)"
-        let rgbValues = currentColor.match(/\d+/g).map((val) => (Math.abs(200 - val)).toString(16)).join("");
+        let rgbValues = extractRbgIntValues(currentColor).map((val) => (Math.abs(200 - val)).toString(16)).join("");
         sq.style.borderColor = `#${rgbValues}`;
         
 
