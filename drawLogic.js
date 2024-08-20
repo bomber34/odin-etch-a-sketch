@@ -303,24 +303,34 @@ function rgbIntValueToHextString(rgbIntVal) {
 }
 
 function getGradient(step) {
-    let gradientColors = new Array(drawAreaDiv.children.length);
-    gradientColors[0] = getRgbIntValue(color);
-    for (let i = 1; i < gradientColors.length; i++) {
-        gradientColors[i] = (gradientColors[i-1] + step) % MAX_RGB_VALUE_INT;
-    }
-    let sortedStuff = gradientColors.sort(function(a, b) {
-        return a - b;
-    });
-    let mappedStuff = sortedStuff.map((val) => rgbIntValueToHextString(val));
+    const RED = 0;
+    const GREEN = 1;
+    const BLUE = 2;
 
-    return mappedStuff;
+    let len = drawAreaDiv.children.length;
+    let gradientColors = new Array(len);
+    gradientColors[0] = hexStringToRgbValues(leftColor);
+    gradientColors[len-1] = hexStringToRgbValues(rightColor);
+    let redStep = gradientColors[len-1][RED] - gradientColors[0][RED];
+    redStep /= step;
+    let greenStep = gradientColors[len-1][GREEN] - gradientColors[0][GREEN];
+    greenStep /= step;
+    let blueStep = gradientColors[len-1][BLUE] - gradientColors[0][BLUE];
+    blueStep /= step;
+    let nextRgb = gradientColors[0].slice();
+    for (let i = 1; i < len-2; i++) {
+        nextRgb[RED] += redStep;
+        nextRgb[GREEN] += greenStep;
+        nextRgb[BLUE] += blueStep;
+        gradientColors[i] = nextRgb.slice().map((val) => Math.floor(val));
+    }
+    return gradientColors.map((val) => toHexString(val));
 }
 
 function drawGradient() {
     let count = 1;
     let max = drawAreaDiv.children.length
     let addDistance = currentGridSize < 50 ? 50 : 25;
-    let colorGradient = color;
     let distanceInMs = addDistance;
     let indices = Array.from({length: (max)}, (e, i) => i);
 
@@ -330,7 +340,7 @@ function drawGradient() {
     FORCED_ANIMATION_STYLE = shouldUseLinesAnimation ? -1 : FORCED_ANIMATION_STYLE;
 
     const step = Math.floor(MAX_RGB_VALUE_INT / drawAreaDiv.children.length);
-    const rgbVals = getGradient(step);
+    const rgbVals = getGradient(max);
     let i = 0;
     for (index of indices) {
         /*
