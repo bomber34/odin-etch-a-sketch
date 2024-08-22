@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etch a sketch</title>
+    <link rel="stylesheet" href="./styles.css">
+    <script src="./coreLogic.js"></script>
+    <script src="./original_task_logic.js" defer></script>
+</head>
+<body>
+    <a href="./index.html">Home</a>
+    <h1>Etch-A-Sketch</h1>
+    <div id="optionsOriginalInputs">
+        <div>
+            <label for="opacityEffectCheckBox">Use Opacity</label>
+            <input id="opacityEffectCheckBox" type="checkbox" title="Use Opacity" value="false" onchange="onChangeCheckBoxOpacityEffect()">
+        </div>
+        <div>
+            <label for="randomColEffectCheckBox">Random Colors</label>
+            <input id="randomColEffectCheckBox" type="checkbox" title="Has Random Color Effect" value="false" onchange="onChangeCheckBoxRandomColors()">
+        </div>
+        <div>
+            <label for="fadeEffectCheckBox">Fading</label>
+            <input id="fadeEffectCheckBox" type="checkbox" title="Has Fade Effect" value="false" onchange="onChangeCheckBoxFadeInput()">
+        </div>
+        <button onclick="onChangeGridSize()">Change Size</button>
+    </div>
+    <div id="drawArea"></div>
+</body>
+</html>

@@ -1,44 +1,3 @@
-// elements
-const drawAreaDiv = document.getElementById("drawArea");
-const body = document.querySelector("body");
-const leftColorPicker = document.getElementById("gridLeftBtnColor");
-const rightColorPicker = document.getElementById("gridRightBtnColor");
-const gridSizeCtl = document.getElementById("gridSizeCtl");
-const gridSizeNumberInput = document.getElementById("gridSizeNumberInput");
-
-// constants
-const LEFT_MOUSE_BUTTON = 0;
-const RIGHT_MOUSE_BUTTON = 2;
-const MAX_RGB_VALUE_INT = (256**3) - 1;
-
-// global variables
-let widthSize = 1;
-let isLeftMouseBtnDown = false;
-let isRightMouseBtnDown = false;
-let leftColor = "#000000";
-let rightColor = "#FFFFFF";
-let currentGridSize = 0;
-let color = leftColor;
-let FORCED_ANIMATION_STYLE = -1;
-
-function onColorChange(isLeft) {
-    if (isLeft) {
-        leftColor = leftColorPicker.value;
-    } else {
-        rightColor = rightColorPicker.value
-    }
-}
-
-function onChangeNumberInput() {
-    gridSizeCtl.value = gridSizeNumberInput.value;
-    drawGrid();
-}
-
-function onChangeRangeInput() {
-    gridSizeNumberInput.value = gridSizeCtl.value ;
-    drawGrid();
-}
-
 // Redraw the grid
 function drawGrid() {
     let gridSize = parseInt(gridSizeCtl.value);
@@ -46,7 +5,7 @@ function drawGrid() {
     if (gridSize > currentGridSize) {
         growGrid(width, gridSize, Math.abs(gridSize - currentGridSize));
     } else if (gridSize < currentGridSize) {
-        shrinkGrid(gridSize, Math.abs(gridSize - currentGridSize));
+        shrinkGrid(Math.abs(gridSize - currentGridSize));
     }
 
     adjustSquareWidth(width);
@@ -62,7 +21,7 @@ function adjustSquareWidth(width) {
     })
 }
 
-function shrinkGrid(newGridSize, diffLines) {
+function shrinkGrid(diffLines) {
     for (let i = diffLines * currentGridSize; i > 0; i--) {
         let child = drawAreaDiv.children[drawAreaDiv.children.length-1];
         drawAreaDiv.removeChild(child);
@@ -94,41 +53,6 @@ function growGrid(width, newGridSize, diffLines) {
             drawAreaDiv.children[index].insertAdjacentElement("afterend", createSquare(width));
         }
         index -= gridSize;
-    }
-}
-
-function createSquare(width) {
-    let square = document.createElement("div");
-    square.classList.add("square");
-    square.style.backgroundColor = "#FFFFFF";
-    return square;
-}
-
-function getWidth(gridSize) {
-    const SCALE = 100;
-    // setup divs - square of evenly divided drawAreaDiv.clientWidth)
-    let width = drawAreaDiv.clientWidth / gridSize;
-
-    // Ensure that due to float inprecision, there is no empty column or overdraw
-    if (width != Math.floor(width)) {
-        width = Math.floor(width * SCALE - 1) / SCALE;
-    }
-    return width;
-}
-
-function oldDraw() {
-    let gridSize = gridSizeCtl.value;
-    // clean space
-    let childrenOfDrawArea = Array.from(drawAreaDiv.children);
-    childrenOfDrawArea.forEach((element) => drawAreaDiv.removeChild(element));
-
-    // setup divs - square of evenly divided drawAreaDiv.clientWidth)
-    widthSize = getWidth(gridSize);
-
-    let squareAmount = gridSize * gridSize;
-    for (let i = 0; i < squareAmount; i++) {
-        let square = createSquare(widthSize);
-        drawAreaDiv.appendChild(square);
     }
 }
 
@@ -175,91 +99,6 @@ function getRandomColorString() {
     const MAX_RGB_VALUE = 256;
     let rgbValues = [0, 0, 0].map((val) => Math.floor(Math.random() * MAX_RGB_VALUE));
     return toHexString(rgbValues);
-}
-
-function shuffle(a) {
-    let j, x, i;
-    for (i = a.length - 1; i > 0; i--) {
-        j = Math.floor(Math.random() * (i + 1));
-        x = a[i];
-        a[i] = a[j];
-        a[j] = x;
-    }
-    return a;
-}
-
-function createMatrix(arr, chunkSize) {
-    const rows = [];
-    for (let i = 0; i < arr.length; i+= chunkSize) {
-        rows.push(arr.slice(i, i+chunkSize));
-    }
-    return rows;
-}
-
-function createSpiral(matrix) {
-    let numRows = matrix.length;
-    let spiral = [];
-    if (numRows == 0) {
-        return spiral;
-    }
-    let numCols = matrix[0].length;
-    if (numRows == 1 && numCols == 1) {
-        return matrix[0][0];
-    }
-
-    let firstRow = matrix[0];
-    let lastRow = matrix[matrix.length - 1];
-    let firstCol = matrix.map((row) => row[0]).slice(1, numCols-1);
-    let lastCol = matrix.map((row) => row[row.length - 1]).slice(1, numCols-1);
-    
-    let innerMatrix = matrix.slice(1, matrix.length-1).map((row) => row.slice(1, row.length-1));
-    return spiral.concat(firstRow)
-        .concat(firstCol)
-        .concat(lastRow.reverse())
-        .concat(lastCol.reverse())
-        .concat(createSpiral(innerMatrix));
-}
-
-function transposeMatrix(matrix) {
-    return matrix[0].map((col, c) => matrix.map((row, r) => matrix[r][c]));
-}
-
-function chooseAnimation(indices) {
-    const LINES = 0;
-    const RANDOM_COLORING = 1;
-    const REVERSE_LINES = 2;
-    const TRANSPOSE = 3;
-    const TRANSPOSE_REVERSE = 4;
-    const SPIRAL = 5;
-    const REVERSE_SPIRAL = 6;
-    const ANIMATION_OPTIONS = [LINES, RANDOM_COLORING, REVERSE_LINES, TRANSPOSE, TRANSPOSE_REVERSE, SPIRAL, REVERSE_SPIRAL];
-
-    let chosenDrawStyle = FORCED_ANIMATION_STYLE >= 0 && FORCED_ANIMATION_STYLE < ANIMATION_OPTIONS.length
-                            ? FORCED_ANIMATION_STYLE : Math.floor(Math.random() * ANIMATION_OPTIONS.length);
-
-    switch (chosenDrawStyle) {
-        case LINES:
-            break;
-        case RANDOM_COLORING:
-            indices = shuffle(indices);
-            break;
-        case REVERSE_LINES:
-            indices = indices.reverse();
-            break;
-        case TRANSPOSE:
-            indices = transposeMatrix(createMatrix(indices, currentGridSize)).flat();
-            break;
-        case TRANSPOSE_REVERSE:
-            indices = transposeMatrix(createMatrix(indices.reverse(), currentGridSize)).flat();
-            break;
-        case SPIRAL:
-            indices = createSpiral(createMatrix(indices, currentGridSize)).flat();
-            break;
-        case REVERSE_SPIRAL:
-            indices = createSpiral(createMatrix(indices, currentGridSize)).flat().reverse();
-            break;
-    }
-    return indices;
 }
 
 function toHexString(rgbValues) {
@@ -383,8 +222,7 @@ function drawGradient(isRainbow = true) {
     indices = chooseAnimation(indices);
     FORCED_ANIMATION_STYLE = shouldUseLinesAnimation ? -1 : FORCED_ANIMATION_STYLE;
 
-    const step = Math.floor(MAX_RGB_VALUE_INT / drawAreaDiv.children.length);
-    const rgbVals = isRainbow ? getRainbowGradient() : getGradientBetweenSelectedColors(step);
+    const rgbVals = isRainbow ? getRainbowGradient() : getGradientBetweenSelectedColors(drawAreaDiv.children.length);
     let i = 0;
     for (index of indices) {
         drawAsync(index, rgbVals[i], distanceInMs);
@@ -457,68 +295,3 @@ function pickColorToDraw() {
         color = rightColor;
     }
 }
-
-drawAreaDiv.addEventListener("mousemove", (event) => {
-    colorSquare(event)
-})
-
-drawAreaDiv.addEventListener("mousedown", (event) => {
-    checkSingleClick(event);
-    colorSquare(event);
-})
-
-drawAreaDiv.addEventListener("mouseover", (event) => {
-    if (event.target.classList.contains("square")) {
-        let sq = event.target
-        let currentColor = sq.style.backgroundColor ? sq.style.backgroundColor : "rgb(255,255,255)"
-        let rgbValues = extractRbgIntValues(currentColor).map((val) => (Math.abs(200 - val)).toString(16)).join("");
-        sq.style.borderColor = `#${rgbValues}`;
-        
-
-        let borderWidthInPixels = widthSize > 10 ? 5 : Math.floor(widthSize / 2);
-        sq.style.borderWidth = `${borderWidthInPixels}px`;
-    }
-})
-
-drawAreaDiv.addEventListener("mouseout", (event) => {
-    if (event.target.classList.contains("square")) {
-        let sq = event.target
-        sq.style.borderColor = "";
-        sq.style.borderWidth = "";
-    }
-})
-
-// general mouse down listener site wide;
-body.addEventListener("contextmenu", (event) => {
-    const target = event.target;
-    if (target.classList.contains("square") || target == drawAreaDiv) {
-        event.preventDefault();
-        return false;
-    }
-    isRightMouseBtnDown = false;
-});
-
-body.addEventListener("mousedown", (event) => {
-    if (event.button == LEFT_MOUSE_BUTTON) {
-        isLeftMouseBtnDown = true;
-    } 
-    
-    if (event.button == RIGHT_MOUSE_BUTTON) {
-        isRightMouseBtnDown = true;
-    }
-})    
-
-body.addEventListener("mouseup", (event) => {
-    if (event.button == LEFT_MOUSE_BUTTON) {
-        isLeftMouseBtnDown = false;
-    } 
-    
-    if (event.button == RIGHT_MOUSE_BUTTON) {
-        isRightMouseBtnDown = false;
-    }
-})
-
-leftColorPicker.value = leftColor;
-rightColorPicker.value = rightColor;
-
-drawGrid();

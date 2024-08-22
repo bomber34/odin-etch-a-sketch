@@ -5,6 +5,10 @@ body {
     align-items: center;
 }
 
+a {
+    margin-bottom: -25px;
+}
+
 #drawArea {
     display: flex;
     flex-wrap: wrap;
@@ -40,8 +44,18 @@ body {
 #options {
     display: flex;
     flex-direction: row;
+    margin-top: -20px;
+    margin-bottom: 10px;
+}
+
+#optionsOriginalInputs {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
     margin-top: -10px;
     margin-bottom: 10px;
+    justify-content: space-around;
+    min-width: 720px;
 }
 
 #colorPickersDiv {
