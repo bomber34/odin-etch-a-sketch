@@ -302,7 +302,51 @@ function rgbIntValueToHextString(rgbIntVal) {
     return toHexString(rgbValues);
 }
 
-function getGradient(step) {
+function getGradientBetweenTwoColors(start, end, arr, leftCol, rightCol) {
+    const RED = 0;
+    const GREEN = 1;
+    const BLUE = 2;
+    let step = end - start;
+    arr[start] = hexStringToRgbValues(leftCol);
+    arr[end] = hexStringToRgbValues(rightCol);
+    let redStep = arr[end][RED] - arr[start][RED];
+    redStep /= step;
+    let greenStep = arr[end][GREEN] - arr[start][GREEN];
+    greenStep /= step;
+    let blueStep = arr[end][BLUE] - arr[start][BLUE];
+    blueStep /= step;
+    let nextRgb = arr[start].slice();
+    for (let i = start+1; i < end; i++) {
+        nextRgb[RED] += redStep;
+        nextRgb[GREEN] += greenStep;
+        nextRgb[BLUE] += blueStep;
+        arr[i] = nextRgb.slice().map((val) => Math.floor(val));
+    }
+
+    for (let i = start; i <= end; i++) {
+        arr[i] = toHexString(arr[i]);
+    }
+    return arr;
+}
+
+function getRainbowGradient() {
+    const RAINBOW_HEX_VALS = ["#ffffff", "#ff0000", "#ffa500", "#ffff00", "#00ff00", "#0000ff", "#4b0082", "800080", "#000000"];
+    let len = drawAreaDiv.children.length;
+    let gradientColors = new Array(len);
+    let current = 0;
+    let step = (len-1) / (RAINBOW_HEX_VALS.length-1);
+    let next = current + step;
+    for (let i = 0; i < RAINBOW_HEX_VALS.length-1; i++) {
+        let left = RAINBOW_HEX_VALS[i];
+        let right = RAINBOW_HEX_VALS[i+1];
+        getGradientBetweenTwoColors(Math.floor(current), Math.floor(next), gradientColors, left, right);
+        current = next;
+        next += step;
+    }
+    return gradientColors;
+}
+
+function getGradientBetweenSelectedColors(step) {
     const RED = 0;
     const GREEN = 1;
     const BLUE = 2;
@@ -327,7 +371,7 @@ function getGradient(step) {
     return gradientColors.map((val) => toHexString(val));
 }
 
-function drawGradient() {
+function drawGradient(isRainbow = true) {
     let count = 1;
     let max = drawAreaDiv.children.length
     let addDistance = currentGridSize < 50 ? 50 : 25;
@@ -340,13 +384,9 @@ function drawGradient() {
     FORCED_ANIMATION_STYLE = shouldUseLinesAnimation ? -1 : FORCED_ANIMATION_STYLE;
 
     const step = Math.floor(MAX_RGB_VALUE_INT / drawAreaDiv.children.length);
-    const rgbVals = getGradient(max);
+    const rgbVals = isRainbow ? getRainbowGradient() : getGradientBetweenSelectedColors(step);
     let i = 0;
     for (index of indices) {
-        /*
-        colorGradient = getNextColor("rgb" + hexStringToRgbValues(colorGradient), step);
-        */
-
         drawAsync(index, rgbVals[i], distanceInMs);
         if (count % currentGridSize == 0) {
             distanceInMs += addDistance;
