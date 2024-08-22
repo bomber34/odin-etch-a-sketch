@@ -14,7 +14,8 @@ a {
     flex-wrap: wrap;
 
     box-sizing: content-box;
-    justify-content: space-around;
+    justify-content: center;
+    align-content: center;
 
     width: 720px;
     height: 720px;
@@ -28,7 +29,7 @@ a {
 }
 
 .square {
-    border: 1px solid whitesmoke;
+    border: 0px solid whitesmoke;
     background-color: transparent;
     box-sizing: border-box;
     margin: 0px;

@@ -8,13 +8,14 @@ function drawGrid() {
         shrinkGrid(Math.abs(gridSize - currentGridSize));
     }
 
-    adjustSquareWidth(width);
+    adjustSquareWidth(width, gridSize);
     currentGridSize = gridSize;
     widthSize = width;
 }
 
-function adjustSquareWidth(width) {
+function adjustSquareWidth(width, gridSize) {
     const widthInPixels = `${width}px`;
+    
     drawAreaDiv.childNodes.forEach((child) => {
         child.style.width = widthInPixels;
         child.style.height = widthInPixels;
