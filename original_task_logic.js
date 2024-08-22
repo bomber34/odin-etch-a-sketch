@@ -23,6 +23,7 @@ function drawGrid() {
         let square = createSquare();
         square.style.width = widthSize;
         square.style.height = widthSize;
+        square.style.borderWidth = "1px";
         drawAreaDiv.appendChild(square);
     }
 }
