@@ -362,7 +362,7 @@ function getGradientBetweenSelectedColors(step) {
     let blueStep = gradientColors[len-1][BLUE] - gradientColors[0][BLUE];
     blueStep /= step;
     let nextRgb = gradientColors[0].slice();
-    for (let i = 1; i < len-2; i++) {
+    for (let i = 1; i < len-1; i++) {
         nextRgb[RED] += redStep;
         nextRgb[GREEN] += greenStep;
         nextRgb[BLUE] += blueStep;
