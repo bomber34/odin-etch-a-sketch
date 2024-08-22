@@ -102,5 +102,5 @@ body.addEventListener("mouseup", (event) => {
 
 leftColorPicker.value = leftColor;
 rightColorPicker.value = rightColor;
-
+console.log("Hello there stranger! You can force specific animations by setting FORCED_ANIMATION_STYLE to an int between 0 and 6 inclusive")
 drawGrid();

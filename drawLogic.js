@@ -274,11 +274,16 @@ function colorSquare(event) {
 function colorAction(event, target) {
     const isMouseDownEvent = event.type == "mousedown";
     const areAllSpecialButtonsPressed = event.ctrlKey && event.altKey && event.shiftKey
+    const areAltAndShiftPressed = event.altKey && event.shiftKey
 
     if (isMouseDownEvent && areAllSpecialButtonsPressed) {
         drawRandomColors();
     } else if (isMouseDownEvent && event.ctrlKey) {
         fillArea(target.style.backgroundColor, target);
+    } else if (isMouseDownEvent && areAltAndShiftPressed) {
+        drawGradient(true);
+    } else if (isMouseDownEvent && event.altKey) {
+        drawGradient(false);
     } else {
         target.style.backgroundColor = color;
     }
