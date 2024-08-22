@@ -79,4 +79,9 @@ drawAreaDiv.addEventListener("mouseout", (event) => {
     }
 })
 
+
+document.getElementById("opacityEffectCheckBox").checked = hasOpacityEffect;
+document.getElementById("fadeEffectCheckBox").checked = hasFadeEffect;
+document.getElementById("randomColEffectCheckBox").checked = hasRandomColorEffect;
+
 drawGrid();
